@@ -3,11 +3,11 @@
 #define FIELD_HEIGHT HEIGHT / TILE_SIZE
 #define FIELD_WIDTH 128
 #define TITLE_SCREEN 0
-#define GAMEPLAY 1
-#define GAMEOVER 2
+#define GAME_PLAY 1
+#define GAME_OVER 2
 #define MAX_X_SPEED 2
 #define GROUND_LEVEL 60
-#define JUMPSPEED -7
+#define JUMP_SPEED -7
 #define FRAMERATE 30
 #define ANIM_IDLE 0
 #define ANIM_RIGHT 2
@@ -16,7 +16,7 @@
 #define ANIM_DOWN 4
 Arduboy2 arduboy;
 
-short Gamestate = GAMEPLAY;
+short gamestate = GAME_PLAY;
 short velocityX = 0;
 short velocityY = 0;
 int16_t playerX = 30;
@@ -216,34 +216,34 @@ void loop()
     {
         arduboy.clear();
 
-        switch (Gamestate)
+        switch (gamestate)
         {
         case TITLE_SCREEN:
-            TitleScreen();
+            titleScreen();
             break;
-        case GAMEPLAY:
-            Gameplay();
+        case GAME_PLAY:
+            gameplay();
             break;
-        case GAMEOVER:
-            GameOver();
+        case GAME_OVER:
+            gameOver();
             break;
         }
     }
     arduboy.display();
 }
 
-void TitleScreen()
+void titleScreen()
 {
     arduboy.print("Jumping");
 
     if (arduboy.justPressed(A_BUTTON))
     {
         arduboy.initRandomSeed();
-        Gamestate = GAMEPLAY;
+        gamestate = GAME_PLAY;
     }
 }
 
-void Gameplay()
+void gameplay()
 {
     move();
     scroll();
@@ -302,7 +302,7 @@ void calculateVelocityY()
     bool checkedcheckSolidTile = checkSolidTile(playerX, playerY + TILE_SIZE) || checkSolidTile(playerX + TILE_SIZE - 1, playerY + TILE_SIZE);
     if (checkedcheckSolidTile && arduboy.pressed(A_BUTTON))
     {
-        velocityY += JUMPSPEED;
+        velocityY += JUMP_SPEED;
     }
     else if (checkedcheckSolidTile && velocityY > 0)
     {
@@ -473,11 +473,11 @@ int16_t divideByTileSize(int16_t input)
     return (int16_t)(input * tileSizeMultiplier);
 }
 
-void GameOver()
+void gameOver()
 {
     arduboy.print("You lost");
     if (arduboy.justPressed(A_BUTTON))
     {
-        Gamestate = TITLE_SCREEN;
+        gamestate = TITLE_SCREEN;
     }
 }
