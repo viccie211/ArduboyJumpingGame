@@ -428,7 +428,7 @@ short hittingHorizontal(short y, int16_t currentX, int16_t targetedX)
         bool toBreak = false;
         for (int16_t x = currentX; x < targetedX && !toBreak; x++)
         {
-            if (checkSolidTile(x + TILE_SIZE, y - 1) || checkSolidTile(x + TILE_SIZE, y + TILE_SIZE - 1))
+            if (checkSolidTile(x + TILE_SIZE, y) || checkSolidTile(x + TILE_SIZE, y + TILE_SIZE - 1))
             {
                 velocityX = 0;
                 returnValue = x;
