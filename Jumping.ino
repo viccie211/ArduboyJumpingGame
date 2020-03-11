@@ -38,8 +38,8 @@ const unsigned char PROGMEM blobAnim[] =
 };
 
 
-
-const byte levelOne[FIELD_HEIGHT][FIELD_WIDTH] PROGMEM = {
+const byte levelOne[FIELD_HEIGHT][FIELD_WIDTH] PROGMEM = 
+{
     {
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     },
@@ -245,6 +245,20 @@ void TitleScreen()
 
 void Gameplay()
 {
+    move();
+    scroll();
+    draw(scrollX);
+}
+
+void move()
+{
+    calculateVelocityX();
+    calculateVelocityY();
+    moveIfPossible();
+}
+
+void calculateVelocityX()
+{
     if (arduboy.pressed(RIGHT_BUTTON) || arduboy.pressed(LEFT_BUTTON))
     {
         if (arduboy.pressed(RIGHT_BUTTON))
@@ -281,6 +295,10 @@ void Gameplay()
             slowdown = true;
         }
     }
+}
+
+void calculateVelocityY()
+{
     bool checkedcheckSolidTile = checkSolidTile(playerX, playerY + TILE_SIZE) || checkSolidTile(playerX + TILE_SIZE - 1, playerY + TILE_SIZE);
     if (checkedcheckSolidTile && arduboy.pressed(A_BUTTON))
     {
@@ -294,15 +312,15 @@ void Gameplay()
     {
         velocityY += 1;
     }
+}
 
+void moveIfPossible()
+{
     int16_t targetedX = playerX + velocityX;
     playerX = hittingHorizontal(playerY, playerX, targetedX);
 
     short targetedY = playerY + velocityY;
     playerY = hittingVertical(playerX, playerY, targetedY);
-
-    scroll();
-    draw(scrollX);
 }
 
 void scroll()
@@ -356,15 +374,6 @@ void drawPlayer(int16_t scroll)
     }
 
     Sprites::drawSelfMasked(playerX + scroll, playerY, blobAnim, frame);
-}
-
-void GameOver()
-{
-    arduboy.print("You lost");
-    if (arduboy.justPressed(A_BUTTON))
-    {
-        Gamestate = TITLE_SCREEN;
-    }
 }
 
 bool checkSolidTile(int16_t checkX, short checkY)
@@ -462,4 +471,13 @@ byte readFromLevel(int16_t x, short y)
 int16_t divideByTileSize(int16_t input)
 {
     return (int16_t)(input * tileSizeMultiplier);
+}
+
+void GameOver()
+{
+    arduboy.print("You lost");
+    if (arduboy.justPressed(A_BUTTON))
+    {
+        Gamestate = TITLE_SCREEN;
+    }
 }
