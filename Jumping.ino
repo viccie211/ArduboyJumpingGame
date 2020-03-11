@@ -25,7 +25,6 @@ int16_t scrollX = 0;
 bool slowdown = true;
 const bool debug = false;
 const float tileSizeMultiplier = 0.25f;
-short animFrameCounter = 0;
 
 const unsigned char PROGMEM blobAnim[] =
 {
@@ -338,15 +337,8 @@ void drawBackground(int16_t scroll)
 void drawPlayer(int16_t scroll)
 {
     short frame = ANIM_IDLE;
-    if(arduboy.pressed(RIGHT_BUTTON) && animFrameCounter<4)
-    {
-        frame = ANIM_RIGHT;
-    }
-    else if(arduboy.pressed(LEFT_BUTTON) && animFrameCounter<4)
-    {
-        frame = ANIM_LEFT;
-    }
-    else if(velocityY<0)
+    
+    if(velocityY<0)
     {
         frame = ANIM_UP;
     }
@@ -354,19 +346,15 @@ void drawPlayer(int16_t scroll)
     {
         frame = ANIM_DOWN;
     }
-    if(arduboy.pressed(RIGHT_BUTTON)||arduboy.pressed(LEFT_BUTTON))
+    else if(arduboy.pressed(RIGHT_BUTTON))
     {
-        animFrameCounter++;
+        frame = ANIM_RIGHT;
     }
-    
-    if(animFrameCounter >= 9||(!arduboy.pressed(LEFT_BUTTON)&&!arduboy.pressed(RIGHT_BUTTON)))
+    else if(arduboy.pressed(LEFT_BUTTON))
     {
-        animFrameCounter = 0;
+        frame = ANIM_LEFT;
     }
-    arduboy.setCursor(0,0);
-    arduboy.print(frame);
-    arduboy.print(",");
-    arduboy.print(animFrameCounter);
+
     Sprites::drawSelfMasked(playerX + scroll, playerY, blobAnim, frame);
 }
 
