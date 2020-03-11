@@ -1,0 +1,10 @@
+const unsigned char PROGMEM testsprite[] =
+    {
+        // width, height,
+        4,
+        4,
+        0x0a,
+        0x05,
+        0x0a,
+        0x05,
+};
