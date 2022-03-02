@@ -1,0 +1,54 @@
+#include <Arduboy2.h>
+#define TILE_SIZE 4
+#define FIELD_HEIGHT HEIGHT / TILE_SIZE
+#define FIELD_WIDTH WIDTH / TILE_SIZE
+#define FRAMERATE 30
+Arduboy2 arduboy;
+
+const byte PROGMEM MapTest[][2] = {
+    {0b00011011, 0b00011011}, {0b11100100, 0b11100100}};
+
+const byte (*level)[2][2];
+
+void setup()
+{
+    // put your setup code here, to run once:
+    arduboy.begin();
+    arduboy.setFrameRate(FRAMERATE);
+    level = &MapTest;
+}
+
+void loop()
+{
+    arduboy.pollButtons();
+
+    if (!arduboy.nextFrame())
+    {
+        return;
+    }
+
+    for (int y = 0; y < 2; y++)
+    {
+        for (int x = 0; x < 8; x++)
+        {
+            arduboy.write(readFromLevel(x, y)+48);
+        }
+        arduboy.write(0x0A);
+    }
+    arduboy.display();
+}
+
+byte readFromLevel(int16_t x, short y)
+{
+    int16_t xByte = x / 4;
+    byte readByte = pgm_read_byte(&((*level))[y][xByte]);
+
+    return readTileBitsFromByte(readByte, x % 4);
+}
+
+byte readTileBitsFromByte(byte toRead, short tilePosition)
+{
+    byte shifted = toRead << tilePosition * 2;
+    shifted = shifted >> 6;
+    return shifted;
+}

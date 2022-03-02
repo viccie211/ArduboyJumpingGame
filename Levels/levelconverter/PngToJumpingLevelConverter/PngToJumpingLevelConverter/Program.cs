@@ -7,8 +7,8 @@ namespace PngToJumpingLevelConverter
 {
     class Program
     {
-        public const string InputPath = "C:\\Git\\Arduino\\Arduboy\\Jumping\\1-1.png";
-        public const string OutputPath = "C:\\Git\\Arduino\\Arduboy\\Jumping\\";
+        public const string InputPath = "D:\\Games\\Repos\\ArduboyJumpingGame\\Levels\\png\\1-1.png";
+        public const string OutputPath = "D:\\Games\\Repos\\ArduboyJumpingGame\\Levels\\txt";
         public const string LevelName = "OneDashOne";
         public static int Height = 0;
         public static int Width = 0;
@@ -47,13 +47,24 @@ namespace PngToJumpingLevelConverter
 
             }
 
-            StringBuilder resultFile = new StringBuilder($"const byte {LevelName}[{Height - 1}][{Width}] PROGMEM = \r\n{'{'}\r\n");
+            StringBuilder resultFile = new StringBuilder($"const byte {LevelName}[{Height - 1}][{Width/4}] PROGMEM = \r\n{'{'}\r\n");
             for (int y = 0; y < Height - 1; y++)
             {
                 resultFile.Append("\t{\r\n\t\t");
-                for (int x = 0; x < Width; x++)
+                for (int x = 0; x < Width; x+=4)
                 {
-                    resultFile.Append($"{level[y][x]}, ");
+                    resultFile.Append("0b");
+                    for (int i = x; i < x + 4; i++)
+                    {
+                        var bitString = Convert.ToString(level[y][i], 2);
+                        if (bitString.Length < 2)
+                        {
+                            bitString = $"0{bitString}";
+                        }
+                        resultFile.Append($"{bitString}");    
+                    }
+
+                    resultFile.Append(", ");
                 }
                 resultFile.Append("\r\n\t},\r\n");
             }
